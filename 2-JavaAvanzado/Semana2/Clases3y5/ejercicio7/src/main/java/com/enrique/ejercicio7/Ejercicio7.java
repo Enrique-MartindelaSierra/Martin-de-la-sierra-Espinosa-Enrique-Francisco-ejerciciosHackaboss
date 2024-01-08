@@ -4,7 +4,6 @@ import com.enrique.ejercicio7.entities.Evento;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,12 +26,19 @@ public class Ejercicio7 {
         System.out.println("Eventos para la fecha " + fechaEspecifica + ":");
         eventosParaFecha.forEach(e -> System.out.println(e.getNombre()));
 
-        Map<String, Long> eventosPorCategoria = eventos.stream()
-                .collect(Collectors.groupingBy(Evento::getCategoria, Collectors.counting()));
+        List<String> categorias = eventos.stream()
+                .map(Evento::getCategoria)
+                .distinct()
+                .collect(Collectors.toList());
 
         System.out.println("Cantidad de eventos por categoría:");
-        eventosPorCategoria.forEach((categoria, cantidad)
-                -> System.out.println(categoria + ": " + cantidad));
+        categorias.forEach(categoria -> {
+            long cantidad = eventos.stream()
+                    .filter(e -> e.getCategoria().equals(categoria))
+                    .count();
+            System.out.println(categoria + ": " + cantidad);
+        }
+        );
 
         LocalDate fechaActual = LocalDate.now();
         Optional<Evento> eventoMasProximo = eventos.stream()
